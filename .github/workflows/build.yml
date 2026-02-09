@@ -16,32 +16,32 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y gcc-aarch64-linux-gnu binutils-aarch64-linux-gnu
 
-      - name: Build skroot-core
-        run: make -C kpm_modules/skroot-core
+      - name: Build skroot-proc-hide
+        run: make -C modules/skroot-proc-hide
 
-      - name: Build skroot-selinux
-        run: make -C kpm_modules/skroot-selinux
+      - name: Build skroot-devfake
+        run: make -C modules/skroot-devfake
 
-      - name: Build skroot-hide
-        run: make -C kpm_modules/skroot-hide
+      - name: Build skroot-inject
+        run: make -C modules/skroot-inject
 
       - name: Verify modules
         run: |
           echo "=== Built KPM modules ==="
-          ls -la kpm_modules/skroot-core/skroot-core.kpm
-          ls -la kpm_modules/skroot-selinux/skroot-selinux.kpm
-          ls -la kpm_modules/skroot-hide/skroot-hide.kpm
+          ls -la modules/skroot-proc-hide/skroot-proc-hide.kpm
+          ls -la modules/skroot-devfake/skroot-devfake.kpm
+          ls -la modules/skroot-inject/skroot-inject.kpm
           echo "=== ELF info ==="
-          file kpm_modules/skroot-core/skroot-core.kpm
-          file kpm_modules/skroot-selinux/skroot-selinux.kpm
-          file kpm_modules/skroot-hide/skroot-hide.kpm
+          file modules/skroot-proc-hide/skroot-proc-hide.kpm
+          file modules/skroot-devfake/skroot-devfake.kpm
+          file modules/skroot-inject/skroot-inject.kpm
 
       - name: Upload KPM artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: kpm-modules
+          name: kpm-modules-v2
           path: |
-            kpm_modules/skroot-core/skroot-core.kpm
-            kpm_modules/skroot-selinux/skroot-selinux.kpm
-            kpm_modules/skroot-hide/skroot-hide.kpm
+            modules/skroot-proc-hide/skroot-proc-hide.kpm
+            modules/skroot-devfake/skroot-devfake.kpm
+            modules/skroot-inject/skroot-inject.kpm
           retention-days: 30
