@@ -1,0 +1,47 @@
+name: Build KPM Modules
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install ARM64 cross-compiler
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-aarch64-linux-gnu binutils-aarch64-linux-gnu
+
+      - name: Build skroot-core
+        run: make -C kpm_modules/skroot-core
+
+      - name: Build skroot-selinux
+        run: make -C kpm_modules/skroot-selinux
+
+      - name: Build skroot-hide
+        run: make -C kpm_modules/skroot-hide
+
+      - name: Verify modules
+        run: |
+          echo "=== Built KPM modules ==="
+          ls -la kpm_modules/skroot-core/skroot-core.kpm
+          ls -la kpm_modules/skroot-selinux/skroot-selinux.kpm
+          ls -la kpm_modules/skroot-hide/skroot-hide.kpm
+          echo "=== ELF info ==="
+          file kpm_modules/skroot-core/skroot-core.kpm
+          file kpm_modules/skroot-selinux/skroot-selinux.kpm
+          file kpm_modules/skroot-hide/skroot-hide.kpm
+
+      - name: Upload KPM artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: kpm-modules
+          path: |
+            kpm_modules/skroot-core/skroot-core.kpm
+            kpm_modules/skroot-selinux/skroot-selinux.kpm
+            kpm_modules/skroot-hide/skroot-hide.kpm
+          retention-days: 30
