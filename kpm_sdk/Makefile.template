@@ -1,0 +1,42 @@
+# KPM Module Makefile Template
+# Include this from your module Makefile after setting MODULE_NAME
+
+# Cross-compiler toolchain (ARM64)
+CROSS_COMPILE ?= aarch64-linux-gnu-
+CC      := $(CROSS_COMPILE)gcc
+LD      := $(CROSS_COMPILE)ld
+OBJCOPY := $(CROSS_COMPILE)objcopy
+
+# Path to the KPM SDK directory (adjust as needed)
+KPM_SDK_DIR ?= ../kpm_sdk
+
+# Module Configuration (override these before including this template)
+MODULE_NAME ?= my_module
+MODULE_SRC  ?= main.c
+
+# Compiler Flags
+CFLAGS := -ffreestanding -nostdlib -fno-plt -fno-pic \
+          -fno-stack-protector -fno-common \
+          -fno-asynchronous-unwind-tables \
+          -I$(KPM_SDK_DIR)/include \
+          -O2 -Wall -Wextra -Werror
+
+# Linker Flags
+LDFLAGS := -r -T $(KPM_SDK_DIR)/kpm.lds
+
+# Derived Variables
+MODULE_OBJ := $(MODULE_SRC:.c=.o)
+MODULE_KPM := $(MODULE_NAME).kpm
+
+.PHONY: all clean
+
+all: $(MODULE_KPM)
+
+$(MODULE_KPM): $(MODULE_OBJ)
+	$(LD) $(LDFLAGS) -o $@ $^
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+clean:
+	rm -f $(MODULE_OBJ) $(MODULE_KPM)
