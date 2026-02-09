@@ -4,9 +4,7 @@
  * 功能：从 /proc 目录中隐藏指定进程，使 ps、top 等工具看不到。
  *
  * 原理：
- *   hook proc_pid_readdir（内核遍历 /proc 下 PID 目录的函数），
- *   在遍历回调 proc_fill_cache 中过滤掉目标 PID 的目录项。
- *   实际实现是 hook filldir 回调，当 /proc 下的数字目录名
+ *   hook filldir64 回调，当 /proc 下的数字目录名
  *   对应的 PID 在隐藏列表中时，跳过该条目。
  *
  * 使用方式：
@@ -50,13 +48,6 @@ static int kpm_atoi(const char *s)
         s++;
     }
     return neg ? -val : val;
-}
-
-static int kpm_strlen(const char *s)
-{
-    int len = 0;
-    while (s[len]) len++;
-    return len;
 }
 
 static int kpm_memcmp(const void *a, const void *b, unsigned long n)
