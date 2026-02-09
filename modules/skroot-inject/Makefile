@@ -1,2 +1,3 @@
 MODULE_NAME := skroot-inject
-include ../../kpm_sdk/Makefile.template
+KPM_SDK_DIR := ../../kpm_sdk
+include $(KPM_SDK_DIR)/Makefile.template
